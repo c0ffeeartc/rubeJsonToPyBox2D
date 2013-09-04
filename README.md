@@ -5,7 +5,6 @@ This module is used for loading pybox2d b2World from R.U.B.E. JSON file to memor
 Usage
 =================
 from rubeJsonToPyBox2D import createWorldFromJson
-
 createWorldFromJson("b2world.json")
 
 Dependencies
@@ -29,10 +28,10 @@ Links
 Issues
 =================
 Polygons and edges work fine.
-User data - not implemented.
-R.U.B.E images - not implemented.
-Motor joint doesn't load properly.
-Open chain shapes load with additional edge from last point to first.
-Loop chain shapes raise an error.
+ - User data - not implemented.
+ - R.U.B.E images - not implemented.
+ - Motor joint doesn't load properly.
+ - Open chain shapes load with additional edge from last point to first.
+ - Loop chain shapes raise an error.
 
 If you know the cause of these bugs please post an issue or submit fix.
