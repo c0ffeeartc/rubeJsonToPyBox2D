@@ -17,7 +17,9 @@ Created with:
 Documentation and references
 =================
  pybox2d - https://code.google.com/p/pybox2d/wiki/Documentation
+
  Box2D documentation comes with Box2D package
+
  R.U.B.E. JSON structure https://www.iforce2d.net/rube/json-structure
 
 Links
