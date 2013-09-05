@@ -6,7 +6,7 @@ Usage
 =================
 from rubeJsonToPyBox2D import createWorldFromJson
 
-createWorldFromJson("b2world.json")
+b2_world = createWorldFromJson("b2world.json")
 
 Dependencies
 =================
