@@ -32,6 +32,3 @@ Issues
 =================
  - User data - not implemented.
  - R.U.B.E images - not implemented.
- - Motor joint doesn't load properly.
-
-If you know the cause of these bugs please post an issue or submit fix.
