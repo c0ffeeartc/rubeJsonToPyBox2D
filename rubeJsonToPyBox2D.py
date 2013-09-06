@@ -231,8 +231,6 @@ def add_body(
             add_fixture(body_ref, jsw, fixture)
 
 
-# TODO: solve open chains.
-# Can't. Don't understand pyBox2D documentation
 def add_fixture(
         b2_world_body,
         jsw,
@@ -272,45 +270,60 @@ def add_fixture(
             )
         fixtureDef.shape = b2.b2PolygonShape(vertices=polygon_vertices)
 
-    if "chain" in jsw_fixture.keys():  # doesn't properly work
+    if "chain" in jsw_fixture.keys():  # works ok
         chain_vertices = rubeVecArrToB2Vec2Arr(
             jsw_fixture["chain"]["vertices"]
             )
 
-        # BUGS!: open ended creates +1 vertice chain
-        # loop shape crashes
-        # edge works ok
-
-        # json chain is b2ChainShape
         if len(chain_vertices) >= 3:
-            # closed-loop ChainShape
-            # BUG: crashes
-            if "hasNextVertex" in jsw_fixture.keys():
-                #setAttr(jsw_fixture, "hasNextVertex", fixtureDef)
-                #setB2Vec2Attr(jsw_fixture, "nextVertex", fixtureDef)
-                #setAttr(jsw_fixture, "hasPrevVertex", fixtureDef)
-                #setB2Vec2Attr(jsw_fixture, "prevVertex", fixtureDef)
+            # closed-loop b2LoopShape
+            # Done
+            if "hasNextVertex" in jsw_fixture["chain"].keys():
 
-                fixtureDef.shape = b2.b2ChainShape(
-                    vertices=chain_vertices,
+                # del last vertice to prevent crash from first and last
+                # vertices being to close
+                del chain_vertices[-1]
+
+                fixtureDef.shape = b2.b2LoopShape(
+                    vertices_loop=chain_vertices,
                     count=len(chain_vertices),
                     )
+
+                setAttr(
+                    jsw_fixture["chain"],
+                    "hasNextVertex",
+                    fixtureDef.shape,
+                    "m_hasNextVertex",
+                    )
+                setB2Vec2Attr(
+                    jsw_fixture["chain"],
+                    "nextVertex",
+                    fixtureDef,
+                    "m_nextVertex",
+                    )
+
+                setAttr(
+                    jsw_fixture["chain"],
+                    "hasPrevVertex",
+                    fixtureDef.shape,
+                    "m_hasPrevVertex",
+                    )
+                setB2Vec2Attr(
+                    jsw_fixture["chain"],
+                    "prevVertex",
+                    fixtureDef.shape,
+                    "m_prevVertex"
+                    )
+
             else:  # open-ended ChainShape
-                # BUG: creates closed chainShape with +1 vertice
+                # Done
                 fixtureDef.shape = b2.b2ChainShape(
-                    vertices=chain_vertices,
+                    vertices_chain=chain_vertices,
                     count=len(chain_vertices),
                     )
-
-                # trying to follow original Box2D manual
-                # following fails
-                #fixtureDef.shape = b2.b2ChainShape()
-                #fixtureDef.shape.CreateChain(
-                #    vertices=chain_vertices,
-                #    count=len(chain_vertices),
-                #    )
 
         # json chain is b2EdgeShape
+        # Done
         if len(chain_vertices) < 3:
             fixtureDef.shape = b2.b2EdgeShape(
                 vertices=chain_vertices,
@@ -382,7 +395,7 @@ def setB2Vec2Attr(
 
 
 if __name__ == "__main__":  # fast test
-    filePathName = "d:\\jointTypes.json"
+    filePathName = "d:\\untitled1.json"
     b2_world = None
 
     b2_world = createWorldFromJson(filePathName)

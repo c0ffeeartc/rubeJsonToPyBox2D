@@ -30,11 +30,8 @@ Links
 
 Issues
 =================
-Polygons and edges work fine.
  - User data - not implemented.
  - R.U.B.E images - not implemented.
  - Motor joint doesn't load properly.
- - Open chain shapes load with additional edge from last point to first.
- - Loop chain shapes raise an error.
 
 If you know the cause of these bugs please post an issue or submit fix.
