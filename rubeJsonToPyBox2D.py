@@ -5,6 +5,8 @@ import Box2D as b2
 import json
 
 
+# NOTE: no custom properties implemented
+# refer to rube, box2d and pybox2d documentation
 def createWorldFromJson(filePathName):
     """
     # loads json from file to memory
@@ -68,8 +70,6 @@ def add_joint(
     b2_world.CreateJoint(jointDef, jsw_joint["type"])
 
 
-# NOTE: no custom properties impplemented
-# refer to rube, box2d and pybox2d documentation
 def create_jointDef(jsw_joint, b2_world):
     joint_type = jsw_joint["type"]  # naming
 
@@ -115,7 +115,7 @@ def create_jointDef(jsw_joint, b2_world):
         setAttr(jsw_joint, "collideConnected", jointDef)
         setAttr(jsw_joint, "enableLimit", jointDef)
         setAttr(jsw_joint, "enableMotor", jointDef)
-        setB2Vec2Attr(jsw_joint, "localAxisA", jointDef, "localAxis1")
+        setB2Vec2Attr(jsw_joint, "localAxisA", jointDef, "axis")
         setAttr(jsw_joint, "lowerLimit", jointDef, "lowerTranslation")
         setAttr(jsw_joint, "maxMotorForce", jointDef)
         setAttr(jsw_joint, "motorSpeed", jointDef)
@@ -150,8 +150,7 @@ def create_jointDef(jsw_joint, b2_world):
         setAttr(jsw_joint, "maxLength", jointDef)
 
     #---------------------------------------------------
-    elif joint_type == "motor":  # Doesn't properly work
-        # missing linearOffset
+    elif joint_type == "motor":  # Done
         jointDef = b2.b2MotorJointDef()
 
         jointDef.bodyA = get_body(b2_world, jsw_joint["bodyA"])
@@ -161,7 +160,7 @@ def create_jointDef(jsw_joint, b2_world):
         setAttr(jsw_joint, "collideConnected", jointDef)
         setAttr(jsw_joint, "maxForce", jointDef)
         setAttr(jsw_joint, "maxTorque", jointDef)
-        setAttr(jsw_joint, "angularOffset", jointDef)
+        setB2Vec2Attr(jsw_joint, "anchorA", jointDef, "linearOffset")
         setAttr(jsw_joint, "correctionFactor", jointDef)
 
     #---------------------------------------------------
@@ -239,11 +238,24 @@ def add_fixture(
      # create and fill fixture definition
     fixtureDef = b2.b2FixtureDef()
 
-    # Done with issues
-    # missing pybox2d "filter" b2BodyDef property
+    # Done with issues:
+    ### missing pybox2d "filter" b2BodyDef property
+
+    # special case for rube documentation of
+    #"filter-categoryBits": 1, //if not present, interpret as 1
+    if "filter-categoryBits" in jsw_fixture.keys():
+        setAttr(jsw_fixture, "filter-categoryBits", fixtureDef, "categoryBits")
+    else:
+        fixtureDef.categoryBits = 1
+
+    # special case for Rube Json property
+    #"filter-maskBits": 1, //if not present, interpret as 65535
+    if "filter-maskBits" in jsw_fixture.keys():
+        setAttr(jsw_fixture, "filter-maskBits", fixtureDef, "maskBits")
+    else:
+        fixtureDef.maskBits = 65535
+
     setAttr(jsw_fixture, "density", fixtureDef)
-    setAttr(jsw_fixture, "filter-categoryBits", fixtureDef, "categoryBits")
-    setAttr(jsw_fixture, "filter-maskBits", fixtureDef, "maskBits")
     setAttr(jsw_fixture, "filter-groupIndex", fixtureDef, "groupIndex")
     setAttr(jsw_fixture, "friction", fixtureDef)
     setAttr(jsw_fixture, "sensor", fixtureDef, "isSensor")
@@ -394,10 +406,7 @@ def setB2Vec2Attr(
     #    print "No key '" + key + "' in dict '" + dict_source["name"] + "'"
 
 
-if __name__ == "__main__":  # fast test
-    filePathName = "d:\\untitled1.json"
-    b2_world = None
+if __name__ == "__main__":  # quick test
+    filePathName = "d:\\jointTypes.json"
 
     b2_world = createWorldFromJson(filePathName)
-    #print b2_world.autoClearForces
-    #print b2_world.__repr__()
