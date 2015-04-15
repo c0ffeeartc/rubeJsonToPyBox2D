@@ -2,6 +2,8 @@ rubeJsonToPyBox2D
 =================
 This module is used for loading pybox2d b2World from R.U.B.E. JSON file to memory.
 
+**Attention**: while this module provides function to load b2World, original RUBE loader allows much more: replicating/retrieving objects, custom properties, images etc. See http://www.iforce2d.net/b2djson/ for the overview.
+
 Usage
 =================
 from rubeJsonToPyBox2D import createWorldFromJson
